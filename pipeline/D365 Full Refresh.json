@@ -62,7 +62,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "ds_asqldb",
+									"referenceName": "DS_ASQLDB",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -80,7 +80,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ds_asqldb",
+									"referenceName": "DS_ASQLDB",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -127,7 +127,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "ds_asqldb",
+									"referenceName": "DS_ASQLDB",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -408,7 +408,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "ds_asqldb",
+						"referenceName": "DS_ASQLDB",
 						"type": "DatasetReference",
 						"parameters": {
 							"ServerName": {
