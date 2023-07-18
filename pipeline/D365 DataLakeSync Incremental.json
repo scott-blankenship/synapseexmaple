@@ -195,7 +195,7 @@
 						"azureTableSourceIgnoreTableNotFound": false
 					},
 					"dataset": {
-						"referenceName": "DS_D365_AZURETABLE",
+						"referenceName": "DS_D365_AzureTable",
 						"type": "DatasetReference",
 						"parameters": {
 							"TableName": {
