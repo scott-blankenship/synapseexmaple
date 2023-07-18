@@ -35,7 +35,8 @@
 		],
 		"parameters": {
 			"ServerName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "dj-sql-enterprise-01.database.windows.net"
 			},
 			"SPName": {
 				"type": "string"
