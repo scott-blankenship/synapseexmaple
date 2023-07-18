@@ -1,23 +1,23 @@
 {
-    "name": "DS_D365_AzureTable",
-    "properties": {
-        "linkedServiceName": {
-            "referenceName": "LS_D365_Table",
-            "type": "LinkedServiceReference"
-        },
-        "parameters": {
-            "TableName": {
-                "type": "string"
-            }
-        },
-        "annotations": [],
-        "type": "AzureTable",
-        "schema": [],
-        "typeProperties": {
-            "tableName": {
-                "value": "@dataset().TableName",
-                "type": "Expression"
-            }
-        }
-    }
+	"name": "DS_D365_AzureTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_D365_Table",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		}
+	}
 }
