@@ -1,5 +1,5 @@
 {
-	"name": "DS_D365_AzureTable",
+	"name": "ds_d365_azuretable",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_D365_Table",

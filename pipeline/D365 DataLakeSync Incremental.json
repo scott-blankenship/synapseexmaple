@@ -195,7 +195,7 @@
 						"azureTableSourceIgnoreTableNotFound": false
 					},
 					"dataset": {
-						"referenceName": "DS_D365_AzureTable",
+						"referenceName": "ds_d365_azuretable",
 						"type": "DatasetReference",
 						"parameters": {
 							"TableName": {
@@ -298,7 +298,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "DS_ASQLDB",
+									"referenceName": "ds_asqldb",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -343,7 +343,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "DS_ASQLDB",
+									"referenceName": "ds_asqldb",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -409,7 +409,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_ASQLDB",
+									"referenceName": "ds_asqldb",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -424,7 +424,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DS_ASQLDB",
+									"referenceName": "ds_asqldb",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -471,7 +471,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "DS_ASQLDB",
+									"referenceName": "ds_asqldb",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -532,7 +532,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "DS_ASQLDB",
+									"referenceName": "ds_asqldb",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
@@ -608,7 +608,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_D365_Binary",
+									"referenceName": "ds_d365_binary",
 									"type": "DatasetReference",
 									"parameters": {
 										"Container": {
@@ -632,7 +632,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DS_D365_Binary",
+									"referenceName": "ds_d365_binary",
 									"type": "DatasetReference",
 									"parameters": {
 										"Container": {
@@ -678,7 +678,7 @@
 									"partitionOption": "None"
 								},
 								"dataset": {
-									"referenceName": "DS_ASQLDB",
+									"referenceName": "ds_asqldb",
 									"type": "DatasetReference",
 									"parameters": {
 										"ServerName": {
