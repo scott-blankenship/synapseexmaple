@@ -10,7 +10,7 @@
 					"referenceName": "LS_D365_AzureKeyVault",
 					"type": "LinkedServiceReference",
 					"parameters": {
-						"KVURL": "https://nucorkeyvaulte2e.vault.azure.net/"
+						"KVURL": "https://dj-test-key-core-01.vault.azure.net/"
 					}
 				},
 				"secretName": "D365ADLSGen2"
