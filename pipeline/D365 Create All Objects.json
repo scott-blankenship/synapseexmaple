@@ -132,7 +132,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_D365_JSON",
+						"referenceName": "ds_d365_json",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "dynamics365-financeandoperations",
@@ -267,7 +267,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_D365_JSON",
+						"referenceName": "ds_d365_json",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "dynamics365-financeandoperations",
@@ -393,7 +393,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_D365_JSON",
+						"referenceName": "ds_d365_json",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "dynamics365-financeandoperations",
