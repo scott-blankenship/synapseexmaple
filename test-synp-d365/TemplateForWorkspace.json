@@ -2068,7 +2068,7 @@
 													"value": "@activity('Get ServerName from Key Vault').output.value",
 													"type": "Expression"
 												},
-												"DatabaseName": "D365",
+												"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
 												"SchemaName": "base",
 												"TableName": {
 													"value": "@item().objectName",
@@ -2205,7 +2205,7 @@
 									"value": "@activity('Get ServerName from Key Vault').output.value",
 									"type": "Expression"
 								},
-								"DatabaseName": "D365"
+								"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 							}
 						}
 					},
@@ -2260,7 +2260,7 @@
 									"value": "@activity('Get ServerName from Key Vault').output.value",
 									"type": "Expression"
 								},
-								"DatabaseName": "D365"
+								"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 							}
 						}
 					},
@@ -2315,7 +2315,7 @@
 									"value": "@activity('Get ServerName from Key Vault').output.value",
 									"type": "Expression"
 								},
-								"DatabaseName": "D365"
+								"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 							}
 						}
 					},
