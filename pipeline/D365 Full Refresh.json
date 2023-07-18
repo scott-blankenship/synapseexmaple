@@ -1,0 +1,602 @@
+{
+	"name": "D365 Full Refresh",
+	"properties": {
+		"activities": [
+			{
+				"name": "For Each ManifestArray",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Save Indexes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter ObjectType').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Full Data Copy",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "@{concat('\nIF OBJECT_ID(''[base].[',item().objectName,']'', ''U'') IS NOT NULL \nDROP TABLE [base].[',item().objectName,']\n')}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": true,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "dbo",
+										"TableName": {
+											"value": "@item().objectName",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "base",
+										"TableName": {
+											"value": "@item().objectName",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Check for PK",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Full Data Copy",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('\nIF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = ''PK_',item().objectName,''') AND EXISTS (SELECT 1 FROM sys.tables t JOIN sys.columns c ON C.object_id = t.object_id AND c.name = ''RECID'' WHERE t.name = ''',item().objectName,''')\nBEGIN\n\tEXEC sp_ExecuteSql N''ALTER TABLE [base].[',item().objectName,'] ALTER COLUMN RECID BIGINT NOT NULL;''\n\tEXEC sp_ExecuteSql N''\n\tALTER TABLE [base].[',item().objectName,'] ADD CONSTRAINT [PK_',item().objectName,'] PRIMARY KEY CLUSTERED \n\t\t(\n\t\t\t[RECID] ASC\n\t\t)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY];''\nEND\n\n\nSELECT 1 as Result\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "x",
+										"TableName": "x"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Get ServerName from Key Vault",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365SqlServerName?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Save Indexes",
+				"description": "The \"Pre Script\" execution in the data flow runs before data is written, but NOT at the start of the sequence! So this is needed to run before any table is rebuilt",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Filter ObjectType",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctrl].[CreateDropIndexes]",
+					"storedProcedureParameters": {
+						"CreateDrop": {
+							"value": "Drop",
+							"type": "String"
+						},
+						"ListOnly": {
+							"value": {
+								"value": "@pipeline().parameters.SkipIndexRebuild",
+								"type": "Expression"
+							},
+							"type": "Boolean"
+						},
+						"Table": {
+							"value": {
+								"value": "@if(equals(pipeline().parameters.TableName,'nothing'),'',pipeline().parameters.TableName)",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ASQLDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@activity('Get ServerName from Key Vault').output.value",
+							"type": "Expression"
+						},
+						"DatabaseName": "D365"
+					}
+				}
+			},
+			{
+				"name": "Rebuild Indexes2",
+				"description": "Not doing this table by table because of dependencies",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "For Each ManifestArray",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctrl].[CreateDropIndexes]",
+					"storedProcedureParameters": {
+						"CreateDrop": {
+							"value": "Create",
+							"type": "String"
+						},
+						"ListOnly": {
+							"value": {
+								"value": "@pipeline().parameters.SkipIndexRebuild",
+								"type": "Expression"
+							},
+							"type": "Boolean"
+						},
+						"Table": {
+							"value": {
+								"value": "@if(equals(pipeline().parameters.TableName,'nothing'),'',pipeline().parameters.TableName)",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ASQLDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@activity('Get ServerName from Key Vault').output.value",
+							"type": "Expression"
+						},
+						"DatabaseName": "D365"
+					}
+				}
+			},
+			{
+				"name": "Rebuild Indexes1",
+				"description": "Not doing this table by table because of dependencies",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "For Each ManifestArray",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctrl].[CreateDropIndexes]",
+					"storedProcedureParameters": {
+						"CreateDrop": {
+							"value": "Create",
+							"type": "String"
+						},
+						"ListOnly": {
+							"value": {
+								"value": "@pipeline().parameters.SkipIndexRebuild",
+								"type": "Expression"
+							},
+							"type": "Boolean"
+						},
+						"Table": {
+							"value": {
+								"value": "@if(equals(pipeline().parameters.TableName,'nothing'),'',pipeline().parameters.TableName)",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ASQLDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@activity('Get ServerName from Key Vault').output.value",
+							"type": "Expression"
+						},
+						"DatabaseName": "D365"
+					}
+				}
+			},
+			{
+				"name": "Get OnDemand ServerName from Key Vault",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365OnDemandSqlServerName?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get Distinct Entities",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Get EntityAttributes_raw",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[meta].[GetTablesForObjectCreation]",
+						"storedProcedureParameters": {
+							"FileSize": {
+								"type": "Int32",
+								"value": {
+									"value": "@activity('Get EntityAttributes_raw').output.size",
+									"type": "Expression"
+								}
+							},
+							"TableList": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.TableName",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ASQLDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": {
+								"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
+								"type": "Expression"
+							},
+							"DatabaseName": "D365",
+							"SchemaName": "x",
+							"TableName": "x"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Get EntityAttributes_raw",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Get ServerName from Key Vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get OnDemand ServerName from Key Vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Storage Account URL from Key Vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Root Folder from Key Vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_D365_PARQUET",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "dynamics365-financeandoperations",
+							"Path": {
+								"value": "@concat(activity('Get Root Folder from Key Vault').output.value,'/Temp/EntitySchema')",
+								"type": "Expression"
+							},
+							"FileName": "EntityAttributes_raw.parquet",
+							"StorageAccountURL": {
+								"value": "@activity('Get Storage Account URL from Key Vault').output.value",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"size"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "ParquetReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Get Storage Account URL from Key Vault",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365StorageAccountURL?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get Root Folder from Key Vault",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365RootFolder?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Filter ObjectType",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Distinct Entities",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Distinct Entities').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().objectType,'Tables')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"KVURL": {
+				"type": "string",
+				"defaultValue": "https://nucorkeyvaulte2e.vault.azure.net/"
+			},
+			"TableName": {
+				"type": "string",
+				"defaultValue": "nothing"
+			},
+			"SkipIndexRebuild": {
+				"type": "bool",
+				"defaultValue": false
+			}
+		},
+		"variables": {
+			"ManifestArray": {
+				"type": "Array"
+			},
+			"CDCSystemTableNameArray": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "D365"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-02-21T18:47:36Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

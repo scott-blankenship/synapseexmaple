@@ -1,0 +1,50 @@
+{
+	"name": "DS_D365_PARQUET",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "D365_CDM_DATA_LAKE",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"URL": {
+					"value": "@dataset().StorageAccountURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"Container": {
+				"type": "string"
+			},
+			"Path": {
+				"type": "string"
+			},
+			"FileName": {
+				"type": "string"
+			},
+			"StorageAccountURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().Path",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().Container",
+					"type": "Expression"
+				}
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

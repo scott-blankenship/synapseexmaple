@@ -1,0 +1,49 @@
+{
+	"name": "D365 DataLakeSync Post Process",
+	"properties": {
+		"activities": [
+			{
+				"name": "Post Process Proc",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": {
+						"value": "@pipeline().parameters.SPName",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ASQLDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@pipeline().parameters.ServerName",
+							"type": "Expression"
+						},
+						"DatabaseName": "D365"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ServerName": {
+				"type": "string"
+			},
+			"SPName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "D365"
+		},
+		"annotations": []
+	}
+}

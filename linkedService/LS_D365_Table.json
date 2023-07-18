@@ -1,0 +1,24 @@
+{
+	"name": "LS_D365_Table",
+	"properties": {
+		"annotations": [],
+		"type": "AzureTableStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_D365_AzureKeyVault",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"KVURL": "https://nucorkeyvaulte2e.vault.azure.net/"
+					}
+				},
+				"secretName": "D365ADLSGen2"
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

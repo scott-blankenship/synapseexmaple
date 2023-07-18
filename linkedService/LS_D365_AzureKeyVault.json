@@ -1,0 +1,16 @@
+{
+	"name": "LS_D365_AzureKeyVault",
+	"properties": {
+		"parameters": {
+			"KVURL": {
+				"type": "string",
+				"defaultValue": "https://nucorkeyvaulte2e.vault.azure.net/"
+			}
+		},
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "@{linkedService().KVURL}"
+		}
+	}
+}
