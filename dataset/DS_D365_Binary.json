@@ -1,5 +1,5 @@
 {
-	"name": "ds_d365_binary",
+	"name": "DS_D365_Binary",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "D365_CDM_DATA_LAKE",

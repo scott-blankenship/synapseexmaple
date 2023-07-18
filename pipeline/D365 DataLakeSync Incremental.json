@@ -608,7 +608,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "ds_d365_binary",
+									"referenceName": "DS_D365_Binary",
 									"type": "DatasetReference",
 									"parameters": {
 										"Container": {
@@ -632,7 +632,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ds_d365_binary",
+									"referenceName": "DS_D365_Binary",
 									"type": "DatasetReference",
 									"parameters": {
 										"Container": {
