@@ -1,21 +1,21 @@
 {
-    "name": "D365_CDM_DATA_LAKE",
-    "properties": {
-        "parameters": {
-            "URL": {
-                "type": "string",
-                "defaultValue": "https://nucornbgdluat.dfs.core.windows.net/"
-            }
-        },
-        "annotations": [],
-        "type": "AzureBlobFS",
-        "typeProperties": {
-            "url": "@{linkedService().URL}"
-        },
-        "connectVia": {
-            "referenceName": "AutoResolveIntegrationRuntime",
-            "type": "IntegrationRuntimeReference"
-        }
-    },
-    "type": "Microsoft.Synapse/workspaces/linkedservices"
+	"name": "D365_CDM_DATA_LAKE",
+	"properties": {
+		"parameters": {
+			"URL": {
+				"type": "string",
+				"defaultValue": "https://djtestdatalakepoc.dfs.core.windows.net/"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "@{linkedService().URL}"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/linkedservices"
 }
