@@ -147,7 +147,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_D365_PARQUET",
+						"referenceName": "ds_d365_parquet",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "dynamics365-financeandoperations",
@@ -282,7 +282,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_D365_PARQUET",
+						"referenceName": "ds_d365_parquet",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "dynamics365-financeandoperations",
@@ -408,7 +408,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_D365_PARQUET",
+						"referenceName": "ds_d365_parquet",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "dynamics365-financeandoperations",
@@ -702,7 +702,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DS_D365_PARQUET",
+						"referenceName": "ds_d365_parquet",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "dynamics365-financeandoperations",
@@ -920,7 +920,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DS_D365_PARQUET",
+									"referenceName": "ds_d365_parquet",
 									"type": "DatasetReference",
 									"parameters": {
 										"Container": "dynamics365-financeandoperations",
