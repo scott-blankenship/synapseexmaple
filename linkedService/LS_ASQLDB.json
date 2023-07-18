@@ -1,23 +1,25 @@
 {
-    "name": "LS_ASQLDB",
-    "properties": {
-        "description": "Connect to any Azure DB where managed identity account is configured",
-        "parameters": {
-            "ServerName": {
-                "type": "string"
-            },
-            "DatabaseName": {
-                "type": "string"
-            }
-        },
-        "annotations": [],
-        "type": "AzureSqlDatabase",
-        "typeProperties": {
-            "connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=@{linkedService().DatabaseName}"
-        },
-        "connectVia": {
-            "referenceName": "AutoResolveIntegrationRuntime",
-            "type": "IntegrationRuntimeReference"
-        }
-    }
+	"name": "LS_ASQLDB",
+	"properties": {
+		"description": "Connect to any Azure DB where managed identity account is configured",
+		"parameters": {
+			"ServerName": {
+				"type": "string",
+				"defaultValue": "dj-sql-enterprise-01.database.windows.net"
+			},
+			"DatabaseName": {
+				"type": "string",
+				"defaultValue": "Test-DB-DF-POC-01"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=@{linkedService().DatabaseName}"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
 }
