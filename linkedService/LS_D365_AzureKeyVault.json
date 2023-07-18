@@ -4,7 +4,7 @@
 		"parameters": {
 			"KVURL": {
 				"type": "string",
-				"defaultValue": "https://nucorkeyvaulte2e.vault.azure.net/"
+				"defaultValue": "https://dj-test-key-core-01.vault.azure.net/"
 			}
 		},
 		"annotations": [],
