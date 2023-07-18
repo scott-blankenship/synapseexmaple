@@ -886,7 +886,7 @@
 												"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
 												"type": "Expression"
 											},
-											"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+											"DatabaseName": "d365"
 										}
 									}
 								},
