@@ -28,7 +28,7 @@
 							"value": "@pipeline().parameters.ServerName",
 							"type": "Expression"
 						},
-						"DatabaseName": "D365"
+						"DatabaseName": "Test-DB-DF-POC-01"
 					}
 				}
 			}
