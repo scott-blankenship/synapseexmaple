@@ -10,7 +10,7 @@
 		"annotations": [],
 		"type": "AzureSqlDatabase",
 		"typeProperties": {
-			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=Test-DB-DF-POC-01"
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=Test-DB-DynamicsFOEntityStore-01-Synapse"
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
