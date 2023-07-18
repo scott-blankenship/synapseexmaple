@@ -4,13 +4,13 @@
 		"parameters": {
 			"ServerName": {
 				"type": "string",
-				"defaultValue": "nbgd365.database.windows.net"
+				"defaultValue": "dj-sql-enterprise-01.database.windows.net"
 			}
 		},
 		"annotations": [],
 		"type": "AzureSqlDatabase",
 		"typeProperties": {
-			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=D365"
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=Test-DB-DF-POC-01"
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
