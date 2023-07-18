@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "test-synp-d365"
+		},
+		"D365_CDM_DATA_LAKE_accountKey": {
+			"value": ""
+		},
+		"LS_ASQLDB_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=@{linkedService().DatabaseName}"
+		},
+		"LS_ASQLDB_D365_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=Test-DB-DynamicsFOEntityStore-01-Synapse"
+		},
+		"test-synp-d365-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:test-synp-d365.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"D365_CDM_DATA_LAKE_properties_typeProperties_url": {
+			"value": "@{linkedService().URL}"
+		},
+		"LS_D365_AzureKeyVault_properties_typeProperties_baseUrl": {
+			"value": "@{linkedService().KVURL}"
+		},
+		"LS_D365_Table_properties_typeProperties_connectionString_secretName": {
+			"value": "D365ADLSGen2"
+		},
+		"test-synp-d365-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://djtestdatalakepoc.dfs.core.windows.net"
+		}
+	}
+}
