@@ -9,7 +9,7 @@
 			},
 			"DatabaseName": {
 				"type": "string",
-				"defaultValue": "Test-DB-DF-POC-01"
+				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 			}
 		},
 		"annotations": [],
