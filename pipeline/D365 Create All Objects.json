@@ -785,7 +785,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "x",
 										"TableName": "x"
 									}
@@ -912,7 +915,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "x",
 										"TableName": "x"
 									}
@@ -1049,6 +1055,10 @@
 			"TableName": {
 				"type": "string",
 				"defaultValue": "nothing"
+			},
+			"BYODDBName": {
+				"type": "string",
+				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 			}
 		},
 		"variables": {
