@@ -763,11 +763,11 @@
 			},
 			"KVURL": {
 				"type": "string",
-				"defaultValue": "https://dj-test-key-core-01.vault.azure.net/"
+				"defaultValue": "https://dj-test-key-d365qa-01.vault.azure.net/"
 			},
 			"BYODDBName": {
 				"type": "string",
-				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+				"defaultValue": "Test-DB-DynamicsFOEntityStoreQA-01"
 			}
 		},
 		"variables": {
