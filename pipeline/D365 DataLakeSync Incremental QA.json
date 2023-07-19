@@ -1,0 +1,786 @@
+{
+	"name": "D365 DataLakeSync Incremental QA",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get ServerName from Key Vault",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365SqlServerName?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get OnDemand ServerName from Key Vault",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365OnDemandSqlServerName?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get DFSAccountURL from Key Valut",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365StorageAccountURL?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get Root Folder from Key Valut",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365RootFolder?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get PBIWorkspaceId from Key Valut",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat(pipeline().parameters.KVURL,'secrets/D365PBIWorkspaceId?api-version=7.0')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Find Table",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Get ServerName from Key Vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get OnDemand ServerName from Key Vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get DFSAccountURL from Key Valut",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Root Folder from Key Valut",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get PBIWorkspaceId from Key Valut",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureTableSource",
+						"azureTableSourceQuery": {
+							"value": "@concat('PartitionKey eq ''',pipeline().parameters.SystemTableName,''' and IsEnabled eq true')",
+							"type": "Expression"
+						},
+						"azureTableSourceIgnoreTableNotFound": false
+					},
+					"dataset": {
+						"referenceName": "DS_D365_AzureTable",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": {
+								"value": "D365TableObjects",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "If Table Found",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Find Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@contains(activity('Find Table').output,'firstRow')",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Set TmpTableName",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Set StartTime",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "TmpTableName",
+								"value": {
+									"value": "@replace(replace(concat('__',pipeline().RunId),'{',''),'}','')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "EXEC MergeD365TableChangeData",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Write Stage Data to D365 SQL",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[meta].[MergeD365TableChangeDataDirect]",
+									"storedProcedureParameters": {
+										"PipelineRunId": {
+											"type": "Guid",
+											"value": {
+												"value": "@pipeline().RunId",
+												"type": "Expression"
+											}
+										},
+										"SystemTableName": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.SystemTableName",
+												"type": "Expression"
+											}
+										},
+										"TmpTableName": {
+											"type": "String",
+											"value": {
+												"value": "@variables('TmpTableName')",
+												"type": "Expression"
+											}
+										}
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
+										"SchemaName": "x",
+										"TableName": "x"
+									}
+								},
+								"firstRowOnly": false
+							}
+						},
+						{
+							"name": "Nuke Tmp D365 Objects",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "EXEC MergeD365TableChangeData",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@{concat('\nIF OBJECT_ID(''[tmp].[',variables('TmpTableName'),']'', ''U'') IS NOT NULL \nDROP TABLE [tmp].[',variables('TmpTableName'),']\n\nSELECT 1 as Result\n')}",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "x",
+										"TableName": "x"
+									}
+								}
+							}
+						},
+						{
+							"name": "Write Stage Data to D365 SQL",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set TmpTableName",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:20:00",
+								"retry": 3,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('\nSELECT\n\tt.*\nFROM\n\tcdc.',pipeline().parameters.SystemTableName,' t\nWHERE\n\tEXISTS (SELECT 1 FROM STRING_SPLIT(''',pipeline().parameters.ChangeFiles,''','','') s WHERE s.value = t.FileName)\nORDER BY\n\tt.RECID\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "@{concat('\nIF OBJECT_ID(''[tmp].[',variables('TmpTableName'),']'', ''U'') IS NOT NULL \nTRUNCATE TABLE [tmp].[',variables('TmpTableName'),']\n')}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": true,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "x",
+										"TableName": "x"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
+										"SchemaName": "tmp",
+										"TableName": {
+											"value": "@variables('TmpTableName')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Nuke Tmp D365 Objects On Fail",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Write Stage Data to D365 SQL",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@{concat('\nIF OBJECT_ID(''[tmp].[',variables('TmpTableName'),']'', ''U'') IS NOT NULL \nDROP TABLE [tmp].[',variables('TmpTableName'),']\n\nSELECT 1 as Result\n')}",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "x",
+										"TableName": "x"
+									}
+								}
+							}
+						},
+						{
+							"name": "Set StartTime",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "StartTime",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Record Fail",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "EXEC MergeD365TableChangeData",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('\nINSERT INTO ctrl.AzureLogTable (\n    Entity,\n    FileID,\n    PipelineRunId,\n    StartTime,\n    EndTime,\n    Result\n) VALUES (\n    ''',pipeline().parameters.SystemTableName,''',\n    ''',pipeline().parameters.ChangeFiles,''',\n    ''',pipeline().RunId,''',\n    ''',variables('StartTime'),''',\n    ''',utcNow(),''',\n    ''',activity('EXEC MergeD365TableChangeData').Error.message,'''\n);\nSELECT CAST(0 as bit) as Result\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "x",
+										"TableName": "x"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Archive Processed Files",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "If Table Found",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@split(pipeline().parameters.ChangeFiles,',')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Archive File",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Record Success",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "BinarySource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": false,
+										"deleteFilesAfterCompletion": true
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_D365_Binary",
+									"type": "DatasetReference",
+									"parameters": {
+										"Container": {
+											"value": "@pipeline().parameters.RootContainer",
+											"type": "Expression"
+										},
+										"Path": {
+											"value": "@concat(activity('Get Root Folder from Key Valut').output.value,'/ChangeFeed/',pipeline().parameters.SystemTableName)",
+											"type": "Expression"
+										},
+										"FileName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"StorageAccountURL": {
+											"value": "@activity('Get DFSAccountURL from Key Valut').output.value",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_D365_Binary",
+									"type": "DatasetReference",
+									"parameters": {
+										"Container": {
+											"value": "@pipeline().parameters.RootContainer",
+											"type": "Expression"
+										},
+										"Path": {
+											"value": "@concat(activity('Get Root Folder from Key Valut').output.value,'/ChangeFeed/',pipeline().parameters.SystemTableName,'/Archive')",
+											"type": "Expression"
+										},
+										"FileName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"StorageAccountURL": {
+											"value": "@activity('Get DFSAccountURL from Key Valut').output.value",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Record Success",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('\nINSERT INTO ctrl.AzureLogTable (\n    Entity,\n    FileID,\n    PipelineRunId,\n    StartTime,\n    EndTime,\n    Result\n) VALUES (\n    ''',pipeline().parameters.SystemTableName,''',\n    ''',item(),''',\n    ''',pipeline().RunId,''',\n    ''',variables('StartTime'),''',\n    ''',utcNow(),''',\n    ''Success''\n);\nSELECT CAST(1 as bit) as Result\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_ASQLDB",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServerName": {
+											"value": "@activity('Get ServerName from Key Vault').output.value",
+											"type": "Expression"
+										},
+										"DatabaseName": "D365",
+										"SchemaName": "x",
+										"TableName": "x"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "If HasPostProcessSproc",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Archive Processed Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@if(contains(activity('Find Table').output,'firstRow'),if(contains(activity('Find Table').output.firstRow,'PostProcessSproc'),true,false),false)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Execute Post Process",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "D365 DataLakeSync Post Process",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": false,
+								"parameters": {
+									"ServerName": {
+										"value": "@activity('Get ServerName from Key Vault').output.value",
+										"type": "Expression"
+									},
+									"SPName": {
+										"value": "@activity('Find Table').output.firstRow.PostProcessSproc",
+										"type": "Expression"
+									},
+									"BYODDBName": {
+										"value": "@pipeline().parameters.BYODDBName",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"RootContainer": {
+				"type": "string",
+				"defaultValue": "dynamics365-financeandoperations"
+			},
+			"SystemTableName": {
+				"type": "string"
+			},
+			"ChangeFiles": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string",
+				"defaultValue": "https://dj-test-key-core-01.vault.azure.net/"
+			},
+			"BYODDBName": {
+				"type": "string",
+				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+			}
+		},
+		"variables": {
+			"TmpTableName": {
+				"type": "String"
+			},
+			"StartTime": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "D365-QA"
+		},
+		"annotations": []
+	}
+}

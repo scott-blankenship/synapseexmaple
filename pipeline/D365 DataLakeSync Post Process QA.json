@@ -1,0 +1,57 @@
+{
+	"name": "D365 DataLakeSync Post Process QA",
+	"properties": {
+		"activities": [
+			{
+				"name": "Post Process Proc",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": {
+						"value": "@pipeline().parameters.SPName",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ASQLDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@pipeline().parameters.ServerName",
+							"type": "Expression"
+						},
+						"DatabaseName": {
+							"value": "@pipeline().parameters.BYODDBName",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ServerName": {
+				"type": "string",
+				"defaultValue": "dj-sql-enterprise-01.database.windows.net"
+			},
+			"SPName": {
+				"type": "string"
+			},
+			"BYODDBName": {
+				"type": "string",
+				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+			}
+		},
+		"folder": {
+			"name": "D365-QA"
+		},
+		"annotations": []
+	}
+}
