@@ -28,7 +28,10 @@
 							"value": "@pipeline().parameters.ServerName",
 							"type": "Expression"
 						},
-						"DatabaseName": "Test-DB-DF-POC-01"
+						"DatabaseName": {
+							"value": "@pipeline().parameters.BYODDBName",
+							"type": "Expression"
+						}
 					}
 				}
 			}
@@ -40,6 +43,10 @@
 			},
 			"SPName": {
 				"type": "string"
+			},
+			"BYODDBName": {
+				"type": "string",
+				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 			}
 		},
 		"folder": {
