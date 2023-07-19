@@ -87,7 +87,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "base",
 										"TableName": {
 											"value": "@item().objectName",
@@ -134,7 +137,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "x",
 										"TableName": "x"
 									}
@@ -223,7 +229,10 @@
 							"value": "@activity('Get ServerName from Key Vault').output.value",
 							"type": "Expression"
 						},
-						"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+						"DatabaseName": {
+							"value": "@pipeline().parameters.BYODDBName",
+							"type": "Expression"
+						}
 					}
 				}
 			},
@@ -278,7 +287,10 @@
 							"value": "@activity('Get ServerName from Key Vault').output.value",
 							"type": "Expression"
 						},
-						"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+						"DatabaseName": {
+							"value": "@pipeline().parameters.BYODDBName",
+							"type": "Expression"
+						}
 					}
 				}
 			},
@@ -333,7 +345,10 @@
 							"value": "@activity('Get ServerName from Key Vault').output.value",
 							"type": "Expression"
 						},
-						"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+						"DatabaseName": {
+							"value": "@pipeline().parameters.BYODDBName",
+							"type": "Expression"
+						}
 					}
 				}
 			},
@@ -582,6 +597,10 @@
 			"SkipIndexRebuild": {
 				"type": "bool",
 				"defaultValue": false
+			},
+			"BYODDBName": {
+				"type": "string",
+				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 			}
 		},
 		"variables": {
