@@ -49,9 +49,6 @@
 				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 			}
 		},
-		"folder": {
-			"name": "D365-Tech"
-		},
 		"annotations": []
 	}
 }
