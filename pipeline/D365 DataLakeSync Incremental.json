@@ -305,7 +305,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "D365",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "x",
 										"TableName": "x"
 									}
@@ -431,7 +434,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "D365",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "tmp",
 										"TableName": {
 											"value": "@variables('TmpTableName')",
@@ -732,6 +738,10 @@
 									"SPName": {
 										"value": "@activity('Find Table').output.firstRow.PostProcessSproc",
 										"type": "Expression"
+									},
+									"BYODDBName": {
+										"value": "@pipeline().parameters.BYODDBName",
+										"type": "Expression"
 									}
 								}
 							}
@@ -754,6 +764,10 @@
 			"KVURL": {
 				"type": "string",
 				"defaultValue": "https://dj-test-key-core-01.vault.azure.net/"
+			},
+			"BYODDBName": {
+				"type": "string",
+				"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 			}
 		},
 		"variables": {
