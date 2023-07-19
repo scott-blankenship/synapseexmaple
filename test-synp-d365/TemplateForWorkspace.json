@@ -840,7 +840,10 @@
 													"value": "@activity('Get ServerName from Key Vault').output.value",
 													"type": "Expression"
 												},
-												"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+												"DatabaseName": {
+													"value": "@pipeline().parameters.BYODDBName",
+													"type": "Expression"
+												},
 												"SchemaName": "x",
 												"TableName": "x"
 											}
@@ -967,7 +970,10 @@
 													"value": "@activity('Get ServerName from Key Vault').output.value",
 													"type": "Expression"
 												},
-												"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+												"DatabaseName": {
+													"value": "@pipeline().parameters.BYODDBName",
+													"type": "Expression"
+												},
 												"SchemaName": "x",
 												"TableName": "x"
 											}
@@ -1108,6 +1114,10 @@
 					"TableName": {
 						"type": "string",
 						"defaultValue": "nothing"
+					},
+					"BYODDBName": {
+						"type": "string",
+						"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 					}
 				},
 				"variables": {
@@ -1116,7 +1126,7 @@
 					}
 				},
 				"folder": {
-					"name": "D365"
+					"name": "D365-Tech"
 				},
 				"annotations": []
 			},
@@ -1442,7 +1452,10 @@
 													"value": "@activity('Get ServerName from Key Vault').output.value",
 													"type": "Expression"
 												},
-												"DatabaseName": "D365",
+												"DatabaseName": {
+													"value": "@pipeline().parameters.BYODDBName",
+													"type": "Expression"
+												},
 												"SchemaName": "x",
 												"TableName": "x"
 											}
@@ -1568,7 +1581,10 @@
 													"value": "@activity('Get ServerName from Key Vault').output.value",
 													"type": "Expression"
 												},
-												"DatabaseName": "D365",
+												"DatabaseName": {
+													"value": "@pipeline().parameters.BYODDBName",
+													"type": "Expression"
+												},
 												"SchemaName": "tmp",
 												"TableName": {
 													"value": "@variables('TmpTableName')",
@@ -1869,6 +1885,10 @@
 											"SPName": {
 												"value": "@activity('Find Table').output.firstRow.PostProcessSproc",
 												"type": "Expression"
+											},
+											"BYODDBName": {
+												"value": "@pipeline().parameters.BYODDBName",
+												"type": "Expression"
 											}
 										}
 									}
@@ -1895,6 +1915,10 @@
 					"KVURL": {
 						"type": "string",
 						"defaultValue": "https://dj-test-key-core-01.vault.azure.net/"
+					},
+					"BYODDBName": {
+						"type": "string",
+						"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 					}
 				},
 				"variables": {
@@ -1906,7 +1930,7 @@
 					}
 				},
 				"folder": {
-					"name": "D365"
+					"name": "D365-Tech"
 				},
 				"annotations": []
 			},
@@ -1950,7 +1974,10 @@
 									"value": "@pipeline().parameters.ServerName",
 									"type": "Expression"
 								},
-								"DatabaseName": "Test-DB-DF-POC-01"
+								"DatabaseName": {
+									"value": "@pipeline().parameters.BYODDBName",
+									"type": "Expression"
+								}
 							}
 						}
 					}
@@ -1966,10 +1993,14 @@
 					},
 					"SPName": {
 						"type": "string"
+					},
+					"BYODDBName": {
+						"type": "string",
+						"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 					}
 				},
 				"folder": {
-					"name": "D365"
+					"name": "D365-Tech"
 				},
 				"annotations": []
 			},
@@ -2068,7 +2099,10 @@
 													"value": "@activity('Get ServerName from Key Vault').output.value",
 													"type": "Expression"
 												},
-												"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+												"DatabaseName": {
+													"value": "@pipeline().parameters.BYODDBName",
+													"type": "Expression"
+												},
 												"SchemaName": "base",
 												"TableName": {
 													"value": "@item().objectName",
@@ -2115,7 +2149,10 @@
 													"value": "@activity('Get ServerName from Key Vault').output.value",
 													"type": "Expression"
 												},
-												"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse",
+												"DatabaseName": {
+													"value": "@pipeline().parameters.BYODDBName",
+													"type": "Expression"
+												},
 												"SchemaName": "x",
 												"TableName": "x"
 											}
@@ -2205,7 +2242,10 @@
 									"value": "@activity('Get ServerName from Key Vault').output.value",
 									"type": "Expression"
 								},
-								"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+								"DatabaseName": {
+									"value": "@pipeline().parameters.BYODDBName",
+									"type": "Expression"
+								}
 							}
 						}
 					},
@@ -2260,7 +2300,10 @@
 									"value": "@activity('Get ServerName from Key Vault').output.value",
 									"type": "Expression"
 								},
-								"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+								"DatabaseName": {
+									"value": "@pipeline().parameters.BYODDBName",
+									"type": "Expression"
+								}
 							}
 						}
 					},
@@ -2315,7 +2358,10 @@
 									"value": "@activity('Get ServerName from Key Vault').output.value",
 									"type": "Expression"
 								},
-								"DatabaseName": "Test-DB-DynamicsFOEntityStore-01-Synapse"
+								"DatabaseName": {
+									"value": "@pipeline().parameters.BYODDBName",
+									"type": "Expression"
+								}
 							}
 						}
 					},
@@ -2571,6 +2617,10 @@
 					"SkipIndexRebuild": {
 						"type": "bool",
 						"defaultValue": false
+					},
+					"BYODDBName": {
+						"type": "string",
+						"defaultValue": "Test-DB-DynamicsFOEntityStore-01-Synapse"
 					}
 				},
 				"variables": {
@@ -2582,7 +2632,7 @@
 					}
 				},
 				"folder": {
-					"name": "D365"
+					"name": "D365-Tech"
 				},
 				"annotations": [],
 				"lastPublishTime": "2023-02-21T18:47:36Z"
