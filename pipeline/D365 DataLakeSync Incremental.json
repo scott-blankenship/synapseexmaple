@@ -691,7 +691,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "D365",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "x",
 										"TableName": "x"
 									}
