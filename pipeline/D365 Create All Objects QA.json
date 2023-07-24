@@ -462,7 +462,10 @@
 								"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
 								"type": "Expression"
 							},
-							"DatabaseName": "D365",
+							"DatabaseName": {
+								"value": "@pipeline().parameters.OnDemandDataBaseName",
+								"type": "Expression"
+							},
 							"SchemaName": "x",
 							"TableName": "x"
 						}
@@ -506,7 +509,10 @@
 								"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
 								"type": "Expression"
 							},
-							"DatabaseName": "D365",
+							"DatabaseName": {
+								"value": "@pipeline().parameters.OnDemandDataBaseName",
+								"type": "Expression"
+							},
 							"SchemaName": "x",
 							"TableName": "x"
 						}
@@ -550,7 +556,10 @@
 								"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
 								"type": "Expression"
 							},
-							"DatabaseName": "D365",
+							"DatabaseName": {
+								"value": "@pipeline().parameters.OnDemandDataBaseName",
+								"type": "Expression"
+							},
 							"SchemaName": "x",
 							"TableName": "x"
 						}
@@ -834,7 +843,10 @@
 										"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
 										"type": "Expression"
 									},
-									"DatabaseName": "d365"
+									"DatabaseName": {
+										"value": "@pipeline().parameters.OnDemandDataBaseName",
+										"type": "Expression"
+									}
 								}
 							}
 						},
@@ -999,7 +1011,10 @@
 								"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
 								"type": "Expression"
 							},
-							"DatabaseName": "D365",
+							"DatabaseName": {
+								"value": "@pipeline().parameters.OnDemandDataBaseName",
+								"type": "Expression"
+							},
 							"SchemaName": "x",
 							"TableName": "x"
 						}
@@ -1059,6 +1074,10 @@
 			"BYODDBName": {
 				"type": "string",
 				"defaultValue": "Test-DB-DynamicsFOEntityStoreQA-01"
+			},
+			"OnDemandDataBaseName": {
+				"type": "string",
+				"defaultValue": "QA"
 			}
 		},
 		"variables": {
