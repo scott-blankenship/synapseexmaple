@@ -419,7 +419,10 @@
 											"value": "@activity('Get OnDemand ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "D365",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.OnDemandDatabaseName",
+											"type": "Expression"
+										},
 										"SchemaName": "x",
 										"TableName": "x"
 									}
@@ -691,7 +694,10 @@
 											"value": "@activity('Get ServerName from Key Vault').output.value",
 											"type": "Expression"
 										},
-										"DatabaseName": "D365",
+										"DatabaseName": {
+											"value": "@pipeline().parameters.BYODDBName",
+											"type": "Expression"
+										},
 										"SchemaName": "x",
 										"TableName": "x"
 									}
@@ -768,6 +774,10 @@
 			"BYODDBName": {
 				"type": "string",
 				"defaultValue": "Test-DB-DynamicsFOEntityStoreQA-01"
+			},
+			"OnDemandDatabaseName": {
+				"type": "string",
+				"defaultValue": "QA"
 			}
 		},
 		"variables": {
